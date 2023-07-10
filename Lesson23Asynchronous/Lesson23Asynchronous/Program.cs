@@ -1,29 +1,27 @@
-﻿
+﻿using System.Net;
 
-
-using System.Net;
-
-List<Task<string>> downloadTasks = new List<Task<string>>();
-
-
-var googleTaks = Task.Run(() => DownloadUrl("https://google.com"));
-
-var duckTask = Task.Run(() => DownloadUrl("https://duckducgo.com"));
-
-var yahooTak = Task.Run(() => DownloadUrl("https://www.yahoo.com"));
-
-var resultArray = await Task.WhenAll(googleTaks, duckTask, yahooTak);
-bool allAreUp = true;
-foreach (var item in resultArray)
+while (true)
 {
-    if (item.StatusCode != HttpStatusCode.OK)
+    var token = new CancellationToken();
+    var googleTask = Task.Run(() => DownloadUrl("https://google.com"), token);
+    var duckTask = Task.Run(() => DownloadUrl("https://duckduckgo.com/"));
+    var yahooTask = Task.Run(() => DownloadUrl("https://localhost:5050"));
+
+
+    var resultsArray = await Task.WhenAll(googleTask);
+    bool allAreUp = true;
+    foreach (var item in resultsArray)
     {
-        allAreUp = false; 
+        if (item.StatusCode != HttpStatusCode.OK)
+        {
+            allAreUp = false;
+        }
     }
+
+    Console.WriteLine(allAreUp ? "All sites are up" : "Not every site is running");
+    await Task.Delay(2000);
 }
 
-Console.WriteLine(allAreUp ? "All sites are up" : "Not every site is  running");
-await Task.Delay(2000);
 
 async Task<HttpResponseMessage> DownloadUrl(string url)
 {
@@ -31,17 +29,36 @@ async Task<HttpResponseMessage> DownloadUrl(string url)
     {
         try
         {
-return  await httpClient.GetAsync(url);
+            return await httpClient.GetAsync(url);
         }
         catch (Exception e)
         {
             return new HttpResponseMessage(HttpStatusCode.NotFound);
         }
-    
-        
-    
     }
 }
+static async Task Main(string[] args)
+{
+    
+    using (HttpClient client = new HttpClient())
+    {
+        try
+        {
+            
+            HttpResponseMessage response = await client.GetAsync("https://www.youtube.com/");
+            response.EnsureSuccessStatusCode(); 
 
+            
+            string responseBody = await response.Content.ReadAsStringAsync();
+
+            
+            Console.WriteLine(responseBody);
+        }
+        catch (HttpRequestException ex)
+        {
+            Console.WriteLine($"Помилка при виконанні запиту: {ex.Message}");
+        }
+    }
+}
 
 Console.ReadLine();

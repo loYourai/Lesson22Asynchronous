@@ -1,75 +1,51 @@
-﻿
-
-
-
-var heatThePen = Task.Run(HeatUpAPen);
-var boilWater = Task.Run(BoilSomeWater);
-
-
-
-
-
-await Task.WhenAll(heatThePen);
-var fryToEggs = Task.Run(FryTwoEEggs);
-await fryToEggs;
-var fryThreeSlicesOfBacon = Task.Run(() => FryThreeSlicesOfBacon());
-
-await Task.WhenAll(boilWater);
-var coffe = Task.Run(MakeSomeCoffe);
-
-await Task.WhenAll(fryThreeSlicesOfBacon, coffe);
-
-
-
-while (true)
+﻿class BreakfastTasks
 {
+    public async Task Main()
+    {
+        var heatThePen = Task.Run(() => HeatUpAPen());
+        var boilWater = Task.Run(() => BoilSomeWater());
 
-    await Task.Delay(1000);
+        await heatThePen;
+        var fryTwoEggs = Task.Run(() => FryTwoEggs());
+        await fryTwoEggs;
+        var fryThreeSlicesOfBacon = Task.Run(() => FryThreeSlicesOfBacon());
 
+        await Task.WhenAll(boilWater);
+        var coffee = Task.Run(() => MakeSomeCoffee());
+
+        await Task.WhenAll(fryThreeSlicesOfBacon, coffee);
+
+        Console.ReadLine();
+
+
+        void HeatUpAPen()
+        {
+            Thread.Sleep(1000);
+            Console.WriteLine("I'm firing pen...");
+        }
+
+        void BoilSomeWater()
+        {
+            Thread.Sleep(5000);
+            Console.WriteLine("I'm boiling water...");
+        }
+
+        void FryTwoEggs()
+        {
+            Thread.Sleep(3000);
+            Console.WriteLine("I'm frying eggs...");
+        }
+
+        void FryThreeSlicesOfBacon()
+        {
+            Thread.Sleep(2000);
+            Console.WriteLine("I'm frying bacon...");
+        }
+
+        void MakeSomeCoffee()
+        {
+            Thread.Sleep(4000);
+            Console.WriteLine("I'm making coffee...");
+        }
+    }
 }
-
-
-
-Console.ReadLine();
-
-
-async void HeatUpAPen()
-{
-
-    Thread.Sleep(1000);
-    Console.WriteLine("i'm firing pen...");
-}
-
-async void BoilSomeWater()
-{
-
-    Thread.Sleep(5000);
-    Console.WriteLine("i'm firing water...");
-}
-
-async void FryTwoEEggs()
-{
-
-    Thread.Sleep(3000);
-    Console.WriteLine("i'm firing eggs...");
-}
-
-async void FryThreeSlicesOfBacon()
-{
-
-    Thread.Sleep(2000);
-    Console.WriteLine("i'm firing bacon...");
-}
-
-
-async void MakeSomeCoffe()
-{
-
-    Thread.Sleep(1000);
-    Console.WriteLine("i'm firing coffee...");
-}
-
-
-
-
-
